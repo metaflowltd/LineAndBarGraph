@@ -44,13 +44,20 @@ class ViewController: UIViewController {
         
         self.drawPointsOnGraph(points!)
     }
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        self.selectAtTouchPoint(touches)
+    }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        
+        self.selectAtTouchPoint(touches)
+    }
+    
+    func selectAtTouchPoint(touches: Set<UITouch>){
         let touchPoint = (touches.first?.locationInView(self.graphView))!
         let contains = self.areaPath?.containsPoint(touchPoint)
-        
-        print("contains: ", contains!)
+        if (contains == nil || !(contains!)){
+            return
+        }
         
         var shortestDistance = CGFloat.max
         var foundPoint:CGPoint?
@@ -65,7 +72,6 @@ class ViewController: UIViewController {
         
         let index = points!.indexOf(foundPoint!)
         
-        print(index)
         if (index != nil){
             for aView in self.pointViews{
                 aView.backgroundColor = UIColor.redColor()
