@@ -12,6 +12,9 @@ class ViewController: UIViewController {
 
 
     @IBOutlet weak var graphView: UIView!
+    @IBOutlet weak var currentDataLabel: UILabel!
+    
+    let data = [80, 77, 78, 84, 78, 79, 78, 76, 75]
     
     var areaPath: UIBezierPath?
     var points:[CGPoint]?
@@ -25,7 +28,6 @@ class ViewController: UIViewController {
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        let data = [80, 77, 78, 84, 78, 79, 78, 76, 75]
         
         self.points = self.makePointsFromData(data)
         var pointsWithContainerPoints = points!
@@ -43,6 +45,8 @@ class ViewController: UIViewController {
         self.graphView.layer.addSublayer(areaLayer)
         
         self.drawPointsOnGraph(points!)
+        
+        
     }
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.selectAtTouchPoint(touches)
@@ -79,6 +83,7 @@ class ViewController: UIViewController {
             let selectedView = self.pointViews[index!]
             selectedView.backgroundColor = UIColor.yellowColor()
         }
+        self.currentDataLabel.text = "\(self.data[index!])"
         
     }
     
