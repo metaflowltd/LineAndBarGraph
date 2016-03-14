@@ -12,13 +12,17 @@ class ViewController: UIViewController {
 
 
     @IBOutlet weak var graphView: UIView!
+    @IBOutlet weak var bottomGraphView: UIView!
     @IBOutlet weak var currentDataLabel: UILabel!
     
-    let data = [80, 77, 78, 84, 78, 79, 78, 76, 75]
+    
+    let weightData = [80, 77, 78, 84, 78, 79, 78, 76, 75]
+    let carbData   = [52, 27, 56, 68, 39, 76, 53, 42, 32]
     
     var areaPath: UIBezierPath?
     var points:[CGPoint]?
     var pointViews = [UIView]()
+    var barViews = [UIView]()
     
     
     override func didReceiveMemoryWarning() {
@@ -29,7 +33,9 @@ class ViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        self.points = self.makePointsFromData(data)
+        let bgColor = UIColor.blueColor()
+        
+        self.points = self.makePointsFromData(weightData)
         var pointsWithContainerPoints = points!
         
         pointsWithContainerPoints.append(CGPointMake(self.graphView.bounds.width, self.graphView.bounds.height))
@@ -38,7 +44,7 @@ class ViewController: UIViewController {
         self.areaPath = self.generateAreaPath(points: pointsWithContainerPoints)
         let areaLayer = CAShapeLayer()
         areaLayer.lineJoin = kCALineJoinBevel
-        areaLayer.fillColor = UIColor.blueColor().CGColor
+        areaLayer.fillColor = bgColor.CGColor
         areaLayer.lineWidth = 1.0
         areaLayer.path = areaPath!.CGPath
         areaLayer.strokeColor = UIColor.grayColor().CGColor
@@ -47,7 +53,35 @@ class ViewController: UIViewController {
         self.drawPointsOnGraph(points!)
         
         
+        
+        
+        
+        
+        self.bottomGraphView.backgroundColor = bgColor
+        
+        let totalWidth = Int(self.bottomGraphView.bounds.size.width)
+        let totalHeight = Int(self.bottomGraphView.bounds.size.height)
+//        let topPadding = 8
+        
+        let segmentWidth = totalWidth / (self.carbData.count)
+        
+        for (var i = 0; i < self.carbData.count; i++){
+            let val = carbData[i]
+            let x = i * segmentWidth
+            let heightOfBar = totalHeight * val / 100
+            let y = totalHeight - heightOfBar
+           let bar = UIView(frame: CGRect(x: x, y: y, width: segmentWidth, height: heightOfBar))
+            bar.backgroundColor = UIColor.grayColor()
+            let dateLabel = UILabel(frame: CGRect(x: 0, y: bar.bounds.height - 40, width: bar.bounds.width, height: 40))
+            dateLabel.text = "\(i)"
+            dateLabel.textAlignment = .Center
+            bar.addSubview(dateLabel)
+            self.barViews.append(bar)
+            self.bottomGraphView.addSubview(bar)
+        }
+        
     }
+    
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.selectAtTouchPoint(touches)
     }
@@ -82,8 +116,14 @@ class ViewController: UIViewController {
             }
             let selectedView = self.pointViews[index!]
             selectedView.backgroundColor = UIColor.yellowColor()
+            
+            for aView in self.barViews{
+                aView.backgroundColor = UIColor.grayColor()
+            }
+            let selectedBarView = self.barViews[index!]
+            selectedBarView.backgroundColor = UIColor.yellowColor()
         }
-        self.currentDataLabel.text = "\(self.data[index!])"
+        self.currentDataLabel.text = "\(self.weightData[index!])"
         
     }
     
