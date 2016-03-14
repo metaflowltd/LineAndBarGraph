@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VdI-Vm-Jlu">
-                                <rect key="frame" x="0.0" y="20" width="600" height="200"/>
+                                <rect key="frame" x="30" y="50" width="540" height="200"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="200" id="gFu-BK-3Yq"/>
@@ -27,9 +27,9 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="VdI-Vm-Jlu" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="d4M-DC-uQr"/>
-                            <constraint firstItem="VdI-Vm-Jlu" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="lse-xQ-BU1"/>
-                            <constraint firstAttribute="trailing" secondItem="VdI-Vm-Jlu" secondAttribute="trailing" id="shL-DI-bne"/>
+                            <constraint firstItem="VdI-Vm-Jlu" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="30" id="d4M-DC-uQr"/>
+                            <constraint firstItem="VdI-Vm-Jlu" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="30" id="lse-xQ-BU1"/>
+                            <constraint firstAttribute="trailing" secondItem="VdI-Vm-Jlu" secondAttribute="trailing" constant="30" id="shL-DI-bne"/>
                         </constraints>
                     </view>
                     <connections>

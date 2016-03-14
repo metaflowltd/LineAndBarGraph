@@ -13,25 +13,86 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var graphView: UIView!
     
+    var areaPath: UIBezierPath?
+    var points:[CGPoint]?
+    var pointViews = [UIView]()
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        let data = [80, 77, 78, 84, 78, 79, 78, 76, 75]
+        
+        self.points = self.makePointsFromData(data)
+        var pointsWithContainerPoints = points!
+        
+        pointsWithContainerPoints.append(CGPointMake(self.graphView.bounds.width, self.graphView.bounds.height))
+        pointsWithContainerPoints.append(CGPointMake(0, self.graphView.bounds.height))
+        
+        self.areaPath = self.generateAreaPath(points: pointsWithContainerPoints)
+        let areaLayer = CAShapeLayer()
+        areaLayer.lineJoin = kCALineJoinBevel
+        areaLayer.fillColor = UIColor.blueColor().CGColor
+        areaLayer.lineWidth = 1.0
+        areaLayer.path = areaPath!.CGPath
+        areaLayer.strokeColor = UIColor.grayColor().CGColor
+        self.graphView.layer.addSublayer(areaLayer)
+        
+        self.drawPointsOnGraph(points!)
     }
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        let data = [80, 77, 78, 84, 78, 79, 78, 76, 75]
-        let points = self.makePointsFromData(data)
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         
-        self.drawLineBetweenManyPoints(points)
+        let touchPoint = (touches.first?.locationInView(self.graphView))!
+        let contains = self.areaPath?.containsPoint(touchPoint)
         
-        self.drawPointsOnGraph(points)
+        print("contains: ", contains!)
+        
+        var shortestDistance = CGFloat.max
+        var foundPoint:CGPoint?
+        for (var i = 0; i < self.points!.count; i++) {
+            let p = points![i]
+            let distance = abs(p.x - touchPoint.x)
+            if (distance < shortestDistance){
+                shortestDistance = distance
+                foundPoint = p
+            }
+        }
+        
+        let index = points!.indexOf(foundPoint!)
+        
+        print(index)
+        if (index != nil){
+            for aView in self.pointViews{
+                aView.backgroundColor = UIColor.redColor()
+            }
+            let selectedView = self.pointViews[index!]
+            selectedView.backgroundColor = UIColor.yellowColor()
+        }
+        
+    }
+    
+    func generateAreaPath(points points: [CGPoint]) -> UIBezierPath {
+        let progressline = UIBezierPath()
+        progressline.lineWidth = 1.0
+        progressline.lineCapStyle = .Round
+        progressline.lineJoinStyle = .Round
+        if let p = points.first {
+            progressline.moveToPoint(p)
+        }
+        
+        for i in 1..<points.count {
+            let p = points[i]
+            progressline.addLineToPoint(p)
+        }
+        
+        progressline.closePath()
+        
+        return progressline
     }
     
     func drawPointsOnGraph(points:[CGPoint]){
@@ -42,7 +103,7 @@ class ViewController: UIViewController {
             
             pView.backgroundColor = UIColor.redColor()
             pView.layer.cornerRadius = 5
-            
+            self.pointViews.append(pView)
             self.graphView.addSubview(pView)
         }
     }
@@ -58,49 +119,11 @@ class ViewController: UIViewController {
         let segmentWidth = totalWidth / (data.count - 1)
         var points = [CGPoint]()
         for (var i = 0; i < data.count; i++){
-            
-            let y = (data[i] * stepHeight) - (minElem! * stepHeight)
+            let y = (maxElem! - data[i]) * stepHeight
             let p2 = CGPoint(x: i * segmentWidth, y: y)
             points.append(p2)
         }
-
         return points
-    }
-    
-    func makeGraphPath(points:[CGPoint]) -> UIBezierPath{
-        let path = UIBezierPath()
-        var lastPoint = points[0]
-        for (var i = 0; i < points.count; i++){
-            let aPoint = points[i]
-            path.moveToPoint(lastPoint)
-            path.addLineToPoint(aPoint)
-            
-            lastPoint = aPoint
-        }
-        return path
-    }
-    
-    func drawLineBetweenManyPoints(points:[CGPoint]){
-        let linePath = CGPathCreateMutable();
-        let lineShape = CAShapeLayer();
-        
-        lineShape.lineWidth = 3;
-        lineShape.lineCap = kCALineCapRound
-        lineShape.lineJoin = kCALineJoinBevel
-        
-        lineShape.strokeColor = UIColor.blackColor().CGColor
-        
-        var lastPoint = points[0]
-        for (var i = 0; i < points.count; i++){
-            let aPoint = points[i]
-            CGPathMoveToPoint(linePath, nil, lastPoint.x, lastPoint.y)
-            CGPathAddLineToPoint(linePath, nil, aPoint.x, aPoint.y);
-            lastPoint = aPoint
-            
-        }
-        lineShape.path = linePath;
-        
-        self.graphView!.layer.addSublayer(lineShape)
     }
     
 }
