@@ -44,13 +44,20 @@ class ViewController: UIViewController {
         pointsWithContainerPoints.append(CGPointMake(self.graphView.bounds.width, self.graphView.bounds.height))
         pointsWithContainerPoints.append(CGPointMake(0, self.graphView.bounds.height))
         
+        let linePath = self.generateAreaPath(points: pointsForGraph, shouldClosePath: false)
+        let lineLayer = CAShapeLayer()
+        lineLayer.lineJoin = kCALineJoinBevel
+        lineLayer.lineWidth = 1.0
+        lineLayer.path = linePath.CGPath
+        lineLayer.strokeColor = lineColor.CGColor
+        lineLayer.fillColor = UIColor.clearColor().CGColor
+        self.graphView.layer.addSublayer(lineLayer)
+        
         self.areaPath = self.generateAreaPath(points: pointsWithContainerPoints)
         let areaLayer = CAShapeLayer()
         areaLayer.lineJoin = kCALineJoinBevel
         areaLayer.fillColor = bgColor.CGColor
-        areaLayer.lineWidth = 1.0
         areaLayer.path = areaPath!.CGPath
-        areaLayer.strokeColor = lineColor.CGColor
         self.graphView.layer.addSublayer(areaLayer)
         
         var pointsWithNoStartAndEnd = pointsForGraph
@@ -60,7 +67,6 @@ class ViewController: UIViewController {
         self.points = pointsWithNoStartAndEnd
         
         self.drawPointsOnGraph(pointsWithNoStartAndEnd)
-        
         
         
         self.drawBottomBarGraph()
@@ -136,7 +142,7 @@ class ViewController: UIViewController {
         
     }
     
-    func generateAreaPath(points points: [CGPoint]) -> UIBezierPath {
+    func generateAreaPath(points points: [CGPoint], shouldClosePath:Bool = true) -> UIBezierPath {
         let progressline = UIBezierPath()
         progressline.lineWidth = 1.0
         progressline.lineCapStyle = .Round
@@ -149,8 +155,9 @@ class ViewController: UIViewController {
             let p = points[i]
             progressline.addLineToPoint(p)
         }
-        
-        progressline.closePath()
+        if (shouldClosePath){
+            progressline.closePath()
+        }
         
         return progressline
     }
