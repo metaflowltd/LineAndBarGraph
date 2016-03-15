@@ -69,6 +69,8 @@ class ViewController: UIViewController {
         self.drawPointsOnGraph(pointsWithNoStartAndEnd)
         
         self.drawBottomBarGraph()
+        
+        self.selectXValueAtIndex(self.carbData.count - 1 )
     }
     
     func drawBottomBarGraph(){
@@ -129,20 +131,22 @@ class ViewController: UIViewController {
         let index = points!.indexOf(foundPoint!)
         
         if (index != nil){
-            for aView in self.pointViews{
-                aView.setUnSelected()
-            }
-            self.pointViews[index!].setSelected()
-
-            
-            for aView in self.barViews{
-                aView.setUnSelected()
-            }
-            self.barViews[index!].setSelected()
-            
+            self.selectXValueAtIndex(index!)
         }
-        self.currentDataLabel.text = "\(self.weightData[index!])"
+    }
+    
+    func selectXValueAtIndex(index:Int){
+        for aView in self.pointViews{
+            aView.setUnSelected()
+        }
+        self.pointViews[index].setSelected()
         
+        
+        for aView in self.barViews{
+            aView.setUnSelected()
+        }
+        self.barViews[index].setSelected()
+        self.currentDataLabel.text = "\(self.weightData[index])"
     }
     
     func generateAreaPath(points points: [CGPoint], shouldClosePath:Bool = true) -> UIBezierPath {
