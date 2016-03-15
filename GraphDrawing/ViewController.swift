@@ -68,7 +68,6 @@ class ViewController: UIViewController {
         
         self.drawPointsOnGraph(pointsWithNoStartAndEnd)
         
-        
         self.drawBottomBarGraph()
     }
     
@@ -106,9 +105,13 @@ class ViewController: UIViewController {
     }
     
     func selectAtTouchPoint(touches: Set<UITouch>){
-        let touchPoint = (touches.first?.locationInView(self.graphView))!
-        let contains =  self.areaPath?.containsPoint(touchPoint)
-        if (contains == nil || !(contains!)){
+        let touchPointInGrpahView = (touches.first?.locationInView(self.graphView))!
+        let containedInTopGraph =  self.areaPath?.containsPoint(touchPointInGrpahView)
+        
+        let touchPointInBottomGrpahView = (touches.first?.locationInView(self.bottomGraphView))!
+        let containedInBottomGraph =  CGRectContainsPoint(bottomGraphView.bounds, touchPointInBottomGrpahView)
+        
+        if (containedInTopGraph == nil || !(containedInTopGraph!) && !containedInBottomGraph){
             return
         }
         
@@ -116,7 +119,7 @@ class ViewController: UIViewController {
         var foundPoint:CGPoint?
         for (var i = 0; i < self.points!.count; i++) {
             let p = points![i]
-            let distance = abs(p.x - touchPoint.x)
+            let distance = abs(p.x - touchPointInGrpahView.x)
             if (distance < shortestDistance){
                 shortestDistance = distance
                 foundPoint = p
