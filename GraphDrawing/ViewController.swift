@@ -16,13 +16,15 @@ class ViewController: UIViewController {
     @IBOutlet weak var currentDataLabel: UILabel!
     
     
-    let weightData = [80, 77, 78, 84, 78, 79, 78, 76, 75]
+    let weightData = [80.1, 77.3, 78.5, 84.7, 78.2, 79.9, 78.4, 76.8, 72.4]
     let carbData   = [52, 27, 56, 68, 39, 76, 53, 42, 32]
+    
+    let bgColor = UIColor.blueColor()
     
     var areaPath: UIBezierPath?
     var points:[CGPoint]?
     var pointViews = [UIView]()
-    var barViews = [UIView]()
+    var barViews = [BarView]()
     
     
     override func didReceiveMemoryWarning() {
@@ -32,9 +34,7 @@ class ViewController: UIViewController {
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        
-        let bgColor = UIColor.blueColor()
-        
+                
         self.points = self.makePointsFromData(weightData)
         var pointsWithContainerPoints = points!
         
@@ -52,16 +52,14 @@ class ViewController: UIViewController {
         
         self.drawPointsOnGraph(points!)
         
-        
-        
-        
-        
-        
+        self.drawBottomBarGraph()
+    }
+    
+    func drawBottomBarGraph(){
         self.bottomGraphView.backgroundColor = bgColor
         
         let totalWidth = Int(self.bottomGraphView.bounds.size.width)
         let totalHeight = Int(self.bottomGraphView.bounds.size.height)
-//        let topPadding = 8
         
         let segmentWidth = totalWidth / (self.carbData.count)
         
@@ -70,12 +68,12 @@ class ViewController: UIViewController {
             let x = i * segmentWidth
             let heightOfBar = totalHeight * val / 100
             let y = totalHeight - heightOfBar
-           let bar = UIView(frame: CGRect(x: x, y: y, width: segmentWidth, height: heightOfBar))
-            bar.backgroundColor = UIColor.grayColor()
-            let dateLabel = UILabel(frame: CGRect(x: 0, y: bar.bounds.height - 40, width: bar.bounds.width, height: 40))
-            dateLabel.text = "\(i)"
-            dateLabel.textAlignment = .Center
-            bar.addSubview(dateLabel)
+           let bar = BarView(frame: CGRect(x: x, y: y, width: segmentWidth, height: heightOfBar))
+            bar.setUnSelected()
+            bar.setXValue("\(i)")
+            bar.setYValue("\(self.carbData[i])%")
+            bar.setTopLineValue(BarSegmentedValue.makeFromValue(self.carbData[i]))
+            
             self.barViews.append(bar)
             self.bottomGraphView.addSubview(bar)
         }
@@ -118,10 +116,10 @@ class ViewController: UIViewController {
             selectedView.backgroundColor = UIColor.yellowColor()
             
             for aView in self.barViews{
-                aView.backgroundColor = UIColor.grayColor()
+                aView.setUnSelected()
             }
-            let selectedBarView = self.barViews[index!]
-            selectedBarView.backgroundColor = UIColor.yellowColor()
+            self.barViews[index!].setSelected()
+            
         }
         self.currentDataLabel.text = "\(self.weightData[index!])"
         
@@ -159,19 +157,19 @@ class ViewController: UIViewController {
         }
     }
     
-    func makePointsFromData(data:[Int]) -> [CGPoint]{
-        let totalWidth = Int(self.graphView.bounds.size.width)
-        let totalHeight = Int(self.graphView.bounds.size.height)
+    func makePointsFromData(data:[Double]) -> [CGPoint]{
+        let totalWidth = Double(self.graphView.bounds.size.width)
+        let totalHeight = Double(self.graphView.bounds.size.height)
         
         let minElem = data.minElement()
         let maxElem = data.maxElement()
         let maxDelta = maxElem! - minElem!
         let stepHeight = totalHeight / (maxDelta)
-        let segmentWidth = totalWidth / (data.count - 1)
+        let segmentWidth = totalWidth / Double(data.count - 1)
         var points = [CGPoint]()
         for (var i = 0; i < data.count; i++){
             let y = (maxElem! - data[i]) * stepHeight
-            let p2 = CGPoint(x: i * segmentWidth, y: y)
+            let p2 = CGPoint(x: Double(i) * segmentWidth, y: y)
             points.append(p2)
         }
         return points
