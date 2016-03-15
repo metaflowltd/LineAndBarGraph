@@ -13,11 +13,13 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var graphView: UIView!
     @IBOutlet weak var bottomGraphView: UIView!
-    @IBOutlet weak var currentDataLabel: UILabel!
+    @IBOutlet weak var currentValueLabel: UILabel!
+    @IBOutlet weak var currentValueMantissaLabel: UILabel!
     
     
-    let weightData = [80.1, 77.3, 78.5, 84.7, 78.2, 79.9, 78.4, 76.8, 72.4]
-    let carbData   = [52, 27, 56, 68, 39, 76, 53, 42, 32]
+    let weightArray = [80.1, 77.3, 78.5, 84.7, 78.2, 79.9, 78.4, 76.8, 72.4]
+    let carbArray   = [52, 27, 56, 68, 39, 76, 53, 42, 32]
+    let dateArray   = ["20/3", "21/3", "22/3", "23/3", "24/3", "25/3", "26/3", "27/3", "28/3"]
     
     let bgColor = UIColor(red: 232.0/255.0, green: 230.0/255.0, blue: 243.0/255.0, alpha: 1)
     let lineColor = UIColor(red: 88.0/255.0, green: 75.0/255.0, blue: 120.0/255.0, alpha: 1)
@@ -38,7 +40,7 @@ class ViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        let pointsForGraph = self.makePointsFromDataForGraph(weightData)
+        let pointsForGraph = self.makePointsFromDataForGraph(weightArray)
         var pointsWithContainerPoints = pointsForGraph
         
         pointsWithContainerPoints.append(CGPointMake(self.graphView.bounds.width, self.graphView.bounds.height))
@@ -70,7 +72,7 @@ class ViewController: UIViewController {
         
         self.drawBottomBarGraph()
         
-        self.selectXValueAtIndex(self.carbData.count - 1 )
+        self.selectXValueAtIndex(self.carbArray.count - 1 )
     }
     
     func drawBottomBarGraph(){
@@ -79,18 +81,18 @@ class ViewController: UIViewController {
         let totalWidth = Int(self.bottomGraphView.bounds.size.width)
         let totalHeight = Int(self.bottomGraphView.bounds.size.height)
         
-        let segmentWidth = totalWidth / (self.carbData.count)
+        let segmentWidth = totalWidth / (self.carbArray.count)
         
-        for (var i = 0; i < self.carbData.count; i++){
-            let val = carbData[i]
+        for (var i = 0; i < self.carbArray.count; i++){
+            let val = carbArray[i]
             let x = i * segmentWidth
             let heightOfBar = totalHeight * val / 100
             let y = totalHeight - heightOfBar
            let bar = BarView(frame: CGRect(x: x, y: y, width: segmentWidth, height: heightOfBar))
             bar.setUnSelected()
             bar.setXValue("\(i)")
-            bar.setYValue("\(self.carbData[i])%")
-            bar.setTopLineValue(BarSegmentedValue.makeFromValue(self.carbData[i]))
+            bar.setYValue("\(self.carbArray[i])%")
+            bar.setTopLineValue(BarSegmentedValue.makeFromValue(self.carbArray[i]))
             
             self.barViews.append(bar)
             self.bottomGraphView.addSubview(bar)
@@ -146,7 +148,19 @@ class ViewController: UIViewController {
             aView.setUnSelected()
         }
         self.barViews[index].setSelected()
-        self.currentDataLabel.text = "\(self.weightData[index])"
+        let wieghtAtIndex = self.weightArray[index]
+        
+        self.currentValueLabel.text = "\(Int(wieghtAtIndex))"
+        self.currentValueMantissaLabel.text = "\(getFractionPart(wieghtAtIndex))"
+    }
+    
+    func getFractionPart(d:Double) -> String{
+        var integer = 0.0
+        let fraction = modf(d, &integer)
+        let str = NSString(format: ".%1.0f", fraction * 10)
+        
+        print("fraction: ", str)
+        return String(str)
     }
     
     func generateAreaPath(points points: [CGPoint], shouldClosePath:Bool = true) -> UIBezierPath {
