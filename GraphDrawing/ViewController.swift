@@ -19,11 +19,14 @@ class ViewController: UIViewController {
     let weightData = [80.1, 77.3, 78.5, 84.7, 78.2, 79.9, 78.4, 76.8, 72.4]
     let carbData   = [52, 27, 56, 68, 39, 76, 53, 42, 32]
     
-    let bgColor = UIColor.blueColor()
+    let bgColor = UIColor(red: 232.0/255.0, green: 230.0/255.0, blue: 243.0/255.0, alpha: 1)
+    let lineColor = UIColor(red: 88.0/255.0, green: 75.0/255.0, blue: 120.0/255.0, alpha: 1)
     
     var areaPath: UIBezierPath?
     var points:[CGPoint]?
-    var pointViews = [UIView]()
+    var halfPoints:[CGPoint]?
+    
+    var pointViews = [LinePointView]()
     var barViews = [BarView]()
     
     
@@ -34,9 +37,9 @@ class ViewController: UIViewController {
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-                
-        self.points = self.makePointsFromData(weightData)
-        var pointsWithContainerPoints = points!
+        
+        let pointsForGraph = self.makePointsFromDataForGraph(weightData)
+        var pointsWithContainerPoints = pointsForGraph
         
         pointsWithContainerPoints.append(CGPointMake(self.graphView.bounds.width, self.graphView.bounds.height))
         pointsWithContainerPoints.append(CGPointMake(0, self.graphView.bounds.height))
@@ -47,10 +50,18 @@ class ViewController: UIViewController {
         areaLayer.fillColor = bgColor.CGColor
         areaLayer.lineWidth = 1.0
         areaLayer.path = areaPath!.CGPath
-        areaLayer.strokeColor = UIColor.grayColor().CGColor
+        areaLayer.strokeColor = lineColor.CGColor
         self.graphView.layer.addSublayer(areaLayer)
         
-        self.drawPointsOnGraph(points!)
+        var pointsWithNoStartAndEnd = pointsForGraph
+        pointsWithNoStartAndEnd.removeFirst()
+        pointsWithNoStartAndEnd.removeLast()
+        
+        self.points = pointsWithNoStartAndEnd
+        
+        self.drawPointsOnGraph(pointsWithNoStartAndEnd)
+        
+        
         
         self.drawBottomBarGraph()
     }
@@ -90,7 +101,7 @@ class ViewController: UIViewController {
     
     func selectAtTouchPoint(touches: Set<UITouch>){
         let touchPoint = (touches.first?.locationInView(self.graphView))!
-        let contains = self.areaPath?.containsPoint(touchPoint)
+        let contains =  self.areaPath?.containsPoint(touchPoint)
         if (contains == nil || !(contains!)){
             return
         }
@@ -110,10 +121,10 @@ class ViewController: UIViewController {
         
         if (index != nil){
             for aView in self.pointViews{
-                aView.backgroundColor = UIColor.redColor()
+                aView.setUnSelected()
             }
-            let selectedView = self.pointViews[index!]
-            selectedView.backgroundColor = UIColor.yellowColor()
+            self.pointViews[index!].setSelected()
+
             
             for aView in self.barViews{
                 aView.setUnSelected()
@@ -145,19 +156,18 @@ class ViewController: UIViewController {
     }
     
     func drawPointsOnGraph(points:[CGPoint]){
+       
         for (var i = 0; i < points.count; i++) {
             let p = points[i]
-            let pView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
+            let pView = LinePointView(frame: CGRect(x: 0, y: 0, width: 6, height: 6))
             pView.center = p
-            
-            pView.backgroundColor = UIColor.redColor()
-            pView.layer.cornerRadius = 5
+            pView.setUnSelected()
             self.pointViews.append(pView)
             self.graphView.addSubview(pView)
         }
     }
     
-    func makePointsFromData(data:[Double]) -> [CGPoint]{
+    func makePointsFromDataForGraph(data:[Double]) -> [CGPoint]{
         let totalWidth = Double(self.graphView.bounds.size.width)
         let totalHeight = Double(self.graphView.bounds.size.height)
         
@@ -165,13 +175,21 @@ class ViewController: UIViewController {
         let maxElem = data.maxElement()
         let maxDelta = maxElem! - minElem!
         let stepHeight = totalHeight / (maxDelta)
-        let segmentWidth = totalWidth / Double(data.count - 1)
+        let segmentWidth = totalWidth / Double(data.count)
         var points = [CGPoint]()
+//        self.halfPoints = [CGPoint]()
+        let firstPoint = CGPoint(x: 0, y: (maxElem! - data[0] - 0.3) * stepHeight )
+        points.append(firstPoint)
         for (var i = 0; i < data.count; i++){
             let y = (maxElem! - data[i]) * stepHeight
-            let p2 = CGPoint(x: Double(i) * segmentWidth, y: y)
+            
+            let p2 = CGPoint(x: Double(i) * segmentWidth + (segmentWidth / 2) , y: y)
             points.append(p2)
         }
+        
+        let lastPoint = CGPoint(x: totalWidth, y: (maxElem! - data.last! - 0.2) * stepHeight )
+        points.append(lastPoint)
+        
         return points
     }
     

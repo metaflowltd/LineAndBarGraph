@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3033F9141C98052300AEFBF5 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3033F9131C98052300AEFBF5 /* BarView.swift */; };
+		3033F9161C98376B00AEFBF5 /* LinePointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3033F9151C98376B00AEFBF5 /* LinePointView.swift */; };
 		303CC0BB1C95FCA700888A72 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303CC0BA1C95FCA700888A72 /* AppDelegate.swift */; };
 		303CC0BD1C95FCA700888A72 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303CC0BC1C95FCA700888A72 /* ViewController.swift */; };
 		303CC0C01C95FCA700888A72 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 303CC0BE1C95FCA700888A72 /* Main.storyboard */; };
@@ -17,6 +18,7 @@
 
 /* Begin PBXFileReference section */
 		3033F9131C98052300AEFBF5 /* BarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
+		3033F9151C98376B00AEFBF5 /* LinePointView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinePointView.swift; sourceTree = "<group>"; };
 		303CC0B71C95FCA600888A72 /* GraphDrawing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GraphDrawing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		303CC0BA1C95FCA700888A72 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		303CC0BC1C95FCA700888A72 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 				303CC0BA1C95FCA700888A72 /* AppDelegate.swift */,
 				303CC0BC1C95FCA700888A72 /* ViewController.swift */,
 				3033F9131C98052300AEFBF5 /* BarView.swift */,
+				3033F9151C98376B00AEFBF5 /* LinePointView.swift */,
 				303CC0BE1C95FCA700888A72 /* Main.storyboard */,
 				303CC0C11C95FCA700888A72 /* Assets.xcassets */,
 				303CC0C31C95FCA700888A72 /* LaunchScreen.storyboard */,
@@ -141,6 +144,7 @@
 				3033F9141C98052300AEFBF5 /* BarView.swift in Sources */,
 				303CC0BD1C95FCA700888A72 /* ViewController.swift in Sources */,
 				303CC0BB1C95FCA700888A72 /* AppDelegate.swift in Sources */,
+				3033F9161C98376B00AEFBF5 /* LinePointView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
