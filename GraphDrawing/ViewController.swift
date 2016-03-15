@@ -77,16 +77,15 @@ class ViewController: UIViewController {
     
     func drawBottomBarGraph(){
         self.bottomGraphView.backgroundColor = bgColor
+        let totalWidth = Double(self.bottomGraphView.bounds.size.width)
+        let totalHeight = Double(self.bottomGraphView.bounds.size.height)
         
-        let totalWidth = Int(self.bottomGraphView.bounds.size.width)
-        let totalHeight = Int(self.bottomGraphView.bounds.size.height)
-        
-        let segmentWidth = totalWidth / (self.carbArray.count)
+        let segmentWidth = totalWidth / Double(self.carbArray.count)
         
         for (var i = 0; i < self.carbArray.count; i++){
             let val = carbArray[i]
-            let x = i * segmentWidth
-            let heightOfBar = totalHeight * val / 100
+            let x = Double(i) * segmentWidth
+            let heightOfBar = totalHeight * Double(val) / 100.0
             let y = totalHeight - heightOfBar
            let bar = BarView(frame: CGRect(x: x, y: y, width: segmentWidth, height: heightOfBar))
             bar.setUnSelected()
@@ -158,8 +157,6 @@ class ViewController: UIViewController {
         var integer = 0.0
         let fraction = modf(d, &integer)
         let str = NSString(format: ".%1.0f", fraction * 10)
-        
-        print("fraction: ", str)
         return String(str)
     }
     
