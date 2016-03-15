@@ -90,7 +90,7 @@ class ViewController: UIViewController {
             let y = totalHeight - heightOfBar
            let bar = BarView(frame: CGRect(x: x, y: y, width: segmentWidth, height: heightOfBar))
             bar.setUnSelected()
-            bar.setXValue("\(i)")
+            bar.setXValue("\(self.dateArray[i])")
             bar.setYValue("\(self.carbArray[i])%")
             bar.setTopLineValue(BarSegmentedValue.makeFromValue(self.carbArray[i]))
             
