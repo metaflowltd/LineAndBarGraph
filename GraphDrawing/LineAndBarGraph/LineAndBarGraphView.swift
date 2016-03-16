@@ -110,7 +110,7 @@ class LineAndBarGraphView: UIView {
         let linePath = self.generateAreaPath(points: pointsForGraph, shouldClosePath: false)
         let lineLayer = CAShapeLayer()
         lineLayer.lineJoin = kCALineJoinBevel
-        lineLayer.lineWidth = 1.0
+        lineLayer.lineWidth = 2.0
         lineLayer.path = linePath.CGPath
         lineLayer.strokeColor = lineColor.CGColor
         lineLayer.fillColor = UIColor.clearColor().CGColor
