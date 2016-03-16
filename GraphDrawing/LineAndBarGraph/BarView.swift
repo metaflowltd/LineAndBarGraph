@@ -38,11 +38,15 @@ class BarView: UIView {
     func setSelected(){
         self.valueLabel.font = UIFont.boldSystemFontOfSize(13)
         self.xValueLabel.font = UIFont.boldSystemFontOfSize(13)
+        self.valueLabel.textColor = UIColor.blackColor()
+        self.xValueLabel.textColor = UIColor.blackColor()
     }
     
     func setUnSelected(){
         self.valueLabel.font = UIFont.systemFontOfSize(13)
         self.xValueLabel.font = UIFont.systemFontOfSize(13)
+        self.valueLabel.textColor = UIColor.grayColor()
+        self.xValueLabel.textColor = UIColor.grayColor()
     }
     
     override init(frame: CGRect) {
