@@ -42,9 +42,9 @@ class LineAndBarGraphView: UIView {
         super.init(frame: frame)
        
         self.lineGraphWrapperView = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height / 2))
-        self.lineGraphView = UIView(frame: self.lineGraphWrapperView.bounds)
+        self.lineGraphView = UIView(frame: CGRect(x: 0, y: 14, width: lineGraphWrapperView.bounds.width, height: lineGraphWrapperView.bounds.height - 14))
         self.lineGraphWrapperView.addSubview(self.lineGraphView)
-        self.topGraphFakeBarsWrapperView = UIView(frame: self.lineGraphView.bounds)
+        self.topGraphFakeBarsWrapperView = UIView(frame: self.lineGraphView.frame)
         self.lineGraphWrapperView.addSubview(self.topGraphFakeBarsWrapperView)
 
         self.barGraphView = UIView(frame: CGRect(x: 0, y: frame.height / 2, width: frame.width, height: frame.height / 2))
@@ -159,8 +159,8 @@ class LineAndBarGraphView: UIView {
         
         self.points = pointsWithNoStartAndEnd
         
-        let totalWidth = Double(self.lineGraphWrapperView.bounds.size.width)
-        let height = Double(self.lineGraphWrapperView.bounds.size.height)
+        let totalWidth = Double(self.topGraphFakeBarsWrapperView.bounds.size.width)
+        let height = Double(self.topGraphFakeBarsWrapperView.bounds.size.height)
         let segmentWidth = totalWidth / Double(self.lineGraphData.count)
         
         for (var i = 0; i < self.lineGraphData.count; i++){
@@ -265,8 +265,9 @@ class LineAndBarGraphView: UIView {
         
         for (var i = 0; i < points.count; i++) {
             let p = points[i]
+            let p1 = self.lineGraphWrapperView.convertPoint(p, fromView: self.lineGraphView)
             let pView = LinePointView(frame: CGRect(x: 0, y: 0, width: 6, height: 6))
-            pView.center = p
+            pView.center = p1
             pView.setUnSelected()
             self.pointViews.append(pView)
             self.lineGraphWrapperView.addSubview(pView)

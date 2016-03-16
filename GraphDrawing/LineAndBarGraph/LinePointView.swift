@@ -24,9 +24,9 @@ class LinePointView: UIView {
     
     func setSelected(){
         self.selectedBG = UIView()
-        self.selectedBG!.frame = CGRectInset(self.bounds, -10, -10)
+        self.selectedBG!.frame = CGRectInset(self.bounds, -9, -9)
         self.selectedBG!.layer.cornerRadius = self.selectedBG!.frame.width / 2
-        self.selectedBG?.backgroundColor = UIColor(white: 0.3, alpha: 0.3)
+        self.selectedBG?.backgroundColor = UIColor(white: 0.3, alpha: 0.5)
         self.addSubview(self.selectedBG!)
 
         self.layer.masksToBounds = false
