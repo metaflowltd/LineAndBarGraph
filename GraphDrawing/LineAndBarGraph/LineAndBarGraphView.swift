@@ -10,15 +10,20 @@ import UIKit
 
 class LineAndBarGraphView: UIView {
     
-    var bgColor = UIColor(red: 232.0/255.0, green: 230.0/255.0, blue: 243.0/255.0, alpha: 1)
-    var lineColor = UIColor(red: 88.0/255.0, green: 75.0/255.0, blue: 120.0/255.0, alpha: 1)
-    var selectedIndexBgColor = UIColor(white: 1, alpha: 0.3)
-    
     var lineGraphData = [80.1, 77.3, 78.5, 84.7, 78.2, 102.9, 78.4, 76.8, 72.4]
     var barGraphData = [52, 27, 56, 68, 39, 76, 53, 42, 32]
     var dateArray = ["20/3", "21/3", "22/3", "23/3", "24/3", "25/3", "26/3", "27/3", "28/3"]
-
+    
+    var bgColor = UIColor(red: 232.0/255.0, green: 230.0/255.0, blue: 243.0/255.0, alpha: 1)
+    var lineColor = UIColor(red: 88.0/255.0, green: 75.0/255.0, blue: 120.0/255.0, alpha: 1)
+    
+    var selectedIndexBgColor = UIColor(white: 1, alpha: 0.3)
+    
     var shouldAnimateEnterance = true
+    
+    /// this is multiplied by the heigth of the top graph
+    /// less than 1 will make smoother graph
+    var smoothValue = 0.4
     
     private var lineGraphWrapperView: UIView!
     private var lineGraphView: UIView!
@@ -276,7 +281,7 @@ class LineAndBarGraphView: UIView {
     
     func makePointsFromDataForGraph(data:[Double]) -> [CGPoint]{
         let totalWidth = Double(self.lineGraphView.bounds.size.width)
-        let totalHeight = Double(self.lineGraphView.bounds.size.height)
+        let totalHeight = Double(self.lineGraphView.bounds.size.height) * smoothValue
         
         let minElem = data.minElement()
         let maxElem = data.maxElement()
