@@ -18,6 +18,8 @@ class LineAndBarGraphView: UIView {
     var barGraphData = [52, 27, 56, 68, 39, 76, 53, 42, 32]
     var dateArray = ["20/3", "21/3", "22/3", "23/3", "24/3", "25/3", "26/3", "27/3", "28/3"]
 
+    var shouldAnimateEnterance = true
+    
     private var lineGraphWrapperView: UIView!
     private var lineGraphView: UIView!
     
@@ -72,6 +74,34 @@ class LineAndBarGraphView: UIView {
         self.drawBottomBarGraph()
         
         self.selectXValueAtIndex(self.barGraphData.count - 1 )
+        
+        if (self.shouldAnimateEnterance){
+            let maskLayer = CAGradientLayer()
+            maskLayer.anchorPoint = CGPointZero
+            
+            let colors = [
+                UIColor(white: 0, alpha: 0).CGColor,
+                UIColor(white: 0, alpha: 1).CGColor]
+            maskLayer.colors = colors
+            maskLayer.bounds = CGRectMake(0, 0, 0, self.layer.bounds.size.height)
+            maskLayer.startPoint = CGPointMake(1, 0)
+            maskLayer.endPoint = CGPointMake(0, 0)
+            self.layer.mask = maskLayer
+            
+            let revealAnimation = CABasicAnimation(keyPath: "bounds")
+            revealAnimation.fromValue = NSValue(CGRect: CGRectMake(0, 0, 0, self.layer.bounds.size.height))
+            
+            let target = CGRectMake(self.layer.bounds.origin.x, self.layer.bounds.origin.y, self.layer.bounds.size.width + 2000, self.layer.bounds.size.height);
+            
+            revealAnimation.toValue = NSValue(CGRect: target)
+            revealAnimation.duration = CFTimeInterval(4.5)
+            
+            revealAnimation.removedOnCompletion = false
+            revealAnimation.fillMode = kCAFillModeForwards
+            
+            revealAnimation.beginTime = CACurrentMediaTime() //+ CFTimeInterval(0.9)
+            self.layer.mask?.addAnimation(revealAnimation, forKey: "revealAnimation")
+        }
     }
     
     func selectXValueAtIndex(index:Int){
@@ -148,7 +178,6 @@ class LineAndBarGraphView: UIView {
     }
     
     private func drawBottomBarGraph(){
-//        self.barGraphView.backgroundColor = bgColor
         let totalWidth = Double(self.barGraphView.bounds.size.width)
         let totalHeight = Double(self.barGraphView.bounds.size.height)
         
