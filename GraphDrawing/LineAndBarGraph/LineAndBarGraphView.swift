@@ -163,6 +163,7 @@ class LineAndBarGraphView: UIView {
         for b in self.barViews{
             b.removeFromSuperview()
         }
+        self.barViews = [BarView]()
         for b in self.bottomGraphFakeBarsViews{
             b.removeFromSuperview()
         }
