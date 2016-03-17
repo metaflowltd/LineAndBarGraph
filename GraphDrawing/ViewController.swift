@@ -23,8 +23,9 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
         
         let graphView = LineAndBarGraphView(frame: self.graphWrapperView.bounds)
         graphView.lineGraphData = weightArray
@@ -33,9 +34,9 @@ class ViewController: UIViewController {
         
         graphView.autoresizingMask = [ .FlexibleWidth , .FlexibleHeight]
 
-        
-        graphView.loadGraphFromPoints()
         self.graphWrapperView.addSubview(graphView)
+        graphView.loadGraphFromPoints()
+        
     }
     
 }
