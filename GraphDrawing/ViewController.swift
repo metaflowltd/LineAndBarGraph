@@ -31,6 +31,9 @@ class ViewController: UIViewController {
         graphView.barGraphData = carbArray
         graphView.dateArray = dateArray
         
+        graphView.autoresizingMask = [ .FlexibleWidth , .FlexibleHeight]
+
+        
         graphView.loadGraphFromPoints()
         self.graphWrapperView.addSubview(graphView)
     }

@@ -42,18 +42,19 @@ class LineAndBarGraphView: UIView {
     private var bottomGraphFakeBarsWrapperView:UIView!
     private var bottomGraphFakeBarsViews = [UIView]()
 
+    private var hasLoadedOnce = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
        
         self.lineGraphWrapperView = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height / 2))
         self.lineGraphView = UIView(frame: CGRect(x: 0, y: 14, width: lineGraphWrapperView.bounds.width, height: lineGraphWrapperView.bounds.height - 14))
+        
         self.lineGraphWrapperView.addSubview(self.lineGraphView)
         self.topGraphFakeBarsWrapperView = UIView(frame: self.lineGraphView.frame)
         self.lineGraphWrapperView.addSubview(self.topGraphFakeBarsWrapperView)
 
         self.barGraphView = UIView(frame: CGRect(x: 0, y: frame.height / 2, width: frame.width, height: frame.height / 2))
-        
         self.bottomGraphFakeBarsWrapperView = UIView(frame: self.barGraphView.frame)
         self.bottomGraphFakeBarsWrapperView.backgroundColor = bgColor
 
@@ -72,6 +73,29 @@ class LineAndBarGraphView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        print(self.frame)
+        
+        self.lineGraphWrapperView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height / 2)
+        self.lineGraphView.frame = CGRect(x: 0, y: 14, width: lineGraphWrapperView.bounds.width, height: lineGraphWrapperView.bounds.height - 14)
+        
+        self.topGraphFakeBarsWrapperView.frame = self.lineGraphView.frame
+        
+        self.barGraphView.frame = CGRect(x: 0, y: frame.height / 2, width: frame.width, height: frame.height / 2)
+        self.bottomGraphFakeBarsWrapperView.frame = self.barGraphView.frame
+        
+        let lineGraphValueLabelHeight = 57.0
+        let lineGraphValueLabelY = (Double(self.frame.height) / 2) - (lineGraphValueLabelHeight / 2)
+
+        self.lineGraphValueLabel.frame = CGRect(x: 8, y: lineGraphValueLabelY, width: 96, height: 57)
+
+        
+        if (hasLoadedOnce){
+            self.cleanGraph()
+            self.loadGraphFromPoints()
+        }
+    }
+    
     
     func loadGraphFromPoints() {
         self.drawTopGraph()
@@ -80,6 +104,7 @@ class LineAndBarGraphView: UIView {
         
         self.selectXValueAtIndex(self.barGraphData.count - 1 )
         
+        self.hasLoadedOnce = true
         if (self.shouldAnimateEnterance){
             let maskLayer = CAGradientLayer()
             maskLayer.anchorPoint = CGPointZero
@@ -99,7 +124,7 @@ class LineAndBarGraphView: UIView {
             let target = CGRectMake(self.layer.bounds.origin.x, self.layer.bounds.origin.y, self.layer.bounds.size.width + 2000, self.layer.bounds.size.height);
             
             revealAnimation.toValue = NSValue(CGRect: target)
-            revealAnimation.duration = CFTimeInterval(4.5)
+            revealAnimation.duration = CFTimeInterval(1.5)
             
             revealAnimation.removedOnCompletion = false
             revealAnimation.fillMode = kCAFillModeForwards
@@ -134,6 +159,30 @@ class LineAndBarGraphView: UIView {
         self.lineGraphValueLabel.setCurrentDisplayingValue(self.lineGraphData[index])
     }
     
+    private func cleanGraph(){
+        for b in self.barViews{
+            b.removeFromSuperview()
+        }
+        for b in self.bottomGraphFakeBarsViews{
+            b.removeFromSuperview()
+        }
+        self.bottomGraphFakeBarsViews = [UIView]()
+        
+        for b in self.topGraphFakeBarsViews{
+            b.removeFromSuperview()
+        }
+        self.topGraphFakeBarsViews = [UIView]()
+        
+        self.lineGraphView.layer.sublayers = nil
+
+        for p in self.pointViews{
+            p.removeFromSuperview()
+        }
+        self.pointViews = [LinePointView]()
+        
+        
+    }
+    
     private func drawTopGraph(){
         let pointsForGraph = self.makePointsFromDataForGraph(lineGraphData)
         var pointsWithContainerPoints = pointsForGraph
@@ -149,8 +198,9 @@ class LineAndBarGraphView: UIView {
         lineLayer.path = linePath.CGPath
         lineLayer.strokeColor = lineColor.CGColor
         lineLayer.fillColor = UIColor.clearColor().CGColor
+        
         self.lineGraphView.layer.addSublayer(lineLayer)
-
+        
         self.areaPath = self.generateAreaPath(points: pointsWithContainerPoints)
         let areaLayer = CAShapeLayer()
         areaLayer.lineJoin = kCALineJoinBevel
@@ -183,6 +233,8 @@ class LineAndBarGraphView: UIView {
     }
     
     private func drawBottomBarGraph(){
+        
+        
         let totalWidth = Double(self.barGraphView.bounds.size.width)
         let totalHeight = Double(self.barGraphView.bounds.size.height)
         
@@ -267,7 +319,6 @@ class LineAndBarGraphView: UIView {
     }
     
     func drawPointsOnGraph(points:[CGPoint]){
-        
         for (var i = 0; i < points.count; i++) {
             let p = points[i]
             let p1 = self.lineGraphWrapperView.convertPoint(p, fromView: self.lineGraphView)
