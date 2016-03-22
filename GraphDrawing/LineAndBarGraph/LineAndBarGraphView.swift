@@ -25,6 +25,15 @@ class LineAndBarGraphView: UIView {
     /// less than 1 will make smoother graph
     var smoothValue = 0.4
     
+    var useScrolling = true
+    var sizeOfSegmentWhenScroll = 54.0
+    
+    private var totalWidthOfData:Double{
+        return Double(self.barGraphData.count) * sizeOfSegmentWhenScroll
+    }
+    
+    private var scrollView: UIScrollView!
+    
     private var lineGraphWrapperView: UIView!
     private var lineGraphView: UIView!
     
@@ -44,9 +53,16 @@ class LineAndBarGraphView: UIView {
 
     private var hasLoadedOnce = false
     
+    
+    //MARK: - Overrides
     override init(frame: CGRect) {
         super.init(frame: frame)
        
+        self.scrollView = UIScrollView(frame: self.bounds)
+        self.addSubview(scrollView)
+        scrollView.scrollEnabled = useScrolling
+        scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("didTap:")))
+        
         self.lineGraphWrapperView = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height / 2))
         self.lineGraphView = UIView(frame: CGRect(x: 0, y: 14, width: lineGraphWrapperView.bounds.width, height: lineGraphWrapperView.bounds.height - 14))
         
@@ -58,9 +74,9 @@ class LineAndBarGraphView: UIView {
         self.bottomGraphFakeBarsWrapperView = UIView(frame: self.barGraphView.frame)
         self.bottomGraphFakeBarsWrapperView.backgroundColor = bgColor
 
-        self.addSubview(self.bottomGraphFakeBarsWrapperView)
-        self.addSubview(self.barGraphView)
-        self.addSubview(self.lineGraphWrapperView)
+        scrollView.addSubview(self.bottomGraphFakeBarsWrapperView)
+        scrollView.addSubview(self.barGraphView)
+        scrollView.addSubview(self.lineGraphWrapperView)
 
         let lineGraphValueLabelHeight = 57.0
         let lineGraphValueLabelY = (Double(frame.height) / 2) - (lineGraphValueLabelHeight / 2)
@@ -74,14 +90,16 @@ class LineAndBarGraphView: UIView {
     }
     
     override func layoutSubviews() {
-        print(self.frame)
+        self.scrollView.frame = self.bounds
         
-        self.lineGraphWrapperView.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height / 2)
+        let graphWidth = useScrolling ? CGFloat(self.totalWidthOfData) : frame.width
+        self.lineGraphWrapperView.frame = CGRect(x: 0, y: 0, width: graphWidth, height: frame.height / 2)
         self.lineGraphView.frame = CGRect(x: 0, y: 14, width: lineGraphWrapperView.bounds.width, height: lineGraphWrapperView.bounds.height - 14)
         
         self.topGraphFakeBarsWrapperView.frame = self.lineGraphView.frame
         
-        self.barGraphView.frame = CGRect(x: 0, y: frame.height / 2, width: frame.width, height: frame.height / 2)
+        
+        self.barGraphView.frame = CGRect(x: 0, y: frame.height / 2, width: graphWidth, height: frame.height / 2)
         self.bottomGraphFakeBarsWrapperView.frame = self.barGraphView.frame
         
         let lineGraphValueLabelHeight = 57.0
@@ -96,6 +114,7 @@ class LineAndBarGraphView: UIView {
         }
     }
     
+    //MARK: - API
     
     func loadGraphFromPoints() {
         self.drawTopGraph()
@@ -105,6 +124,9 @@ class LineAndBarGraphView: UIView {
         self.selectXValueAtIndex(self.barGraphData.count - 1 )
         
         self.hasLoadedOnce = true
+        
+        self.scrollView.contentSize = CGSize(width: self.totalWidthOfData, height: Double(self.bounds.height))
+
         if (self.shouldAnimateEnterance){
             let maskLayer = CAGradientLayer()
             maskLayer.anchorPoint = CGPointZero
@@ -158,6 +180,28 @@ class LineAndBarGraphView: UIView {
         
         self.lineGraphValueLabel.setCurrentDisplayingValue(self.lineGraphData[index])
     }
+    
+    //MARK: - Touches
+    @objc private func didTap(gesture:UITapGestureRecognizer){
+        let touchPointInGrpahView =  gesture.locationInView(scrollView)
+        var shortestDistance = CGFloat.max
+        var foundPoint:CGPoint?
+        for (var i = 0; i < self.points!.count; i++) {
+            let p = points![i]
+            let distance = abs(p.x - touchPointInGrpahView.x)
+            if (distance < shortestDistance){
+                shortestDistance = distance
+                foundPoint = p
+            }
+        }
+        
+        let index = points!.indexOf(foundPoint!)
+        
+        if (index != nil){
+            self.selectXValueAtIndex(index!)
+        }
+    }
+
     
     private func cleanGraph(){
         for b in self.barViews{
@@ -217,7 +261,7 @@ class LineAndBarGraphView: UIView {
         
         let totalWidth = Double(self.topGraphFakeBarsWrapperView.bounds.size.width)
         let height = Double(self.topGraphFakeBarsWrapperView.bounds.size.height)
-        let segmentWidth = totalWidth / Double(self.lineGraphData.count)
+        let segmentWidth = useScrolling ? sizeOfSegmentWhenScroll : totalWidth / Double(self.lineGraphData.count)
         
         for (var i = 0; i < self.lineGraphData.count; i++){
             let x = Double(i) * segmentWidth
@@ -239,7 +283,7 @@ class LineAndBarGraphView: UIView {
         let totalWidth = Double(self.barGraphView.bounds.size.width)
         let totalHeight = Double(self.barGraphView.bounds.size.height)
         
-        let segmentWidth = totalWidth / Double(self.barGraphData.count)
+        let segmentWidth = useScrolling ? sizeOfSegmentWhenScroll : totalWidth / Double(self.barGraphData.count)
         
         for (var i = 0; i < self.barGraphData.count; i++){
             let val = barGraphData[i]
@@ -261,43 +305,8 @@ class LineAndBarGraphView: UIView {
         }
         
     }
-    //MARK: - Touches
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        self.selectAtTouchPoint(touches)
-    }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        self.selectAtTouchPoint(touches)
-    }
-    
-    private func selectAtTouchPoint(touches: Set<UITouch>){
-        let touchPointInGrpahView = (touches.first?.locationInView(self.lineGraphView))!
-        let containedInTopGraph =  self.areaPath?.containsPoint(touchPointInGrpahView)
-        
-        let touchPointInBottomGrpahView = (touches.first?.locationInView(self.barGraphView))!
-        let containedInBottomGraph =  CGRectContainsPoint(barGraphView.bounds, touchPointInBottomGrpahView)
-        
-        if (containedInTopGraph == nil || !(containedInTopGraph!) && !containedInBottomGraph){
-            return
-        }
-        
-        var shortestDistance = CGFloat.max
-        var foundPoint:CGPoint?
-        for (var i = 0; i < self.points!.count; i++) {
-            let p = points![i]
-            let distance = abs(p.x - touchPointInGrpahView.x)
-            if (distance < shortestDistance){
-                shortestDistance = distance
-                foundPoint = p
-            }
-        }
-        
-        let index = points!.indexOf(foundPoint!)
-        
-        if (index != nil){
-            self.selectXValueAtIndex(index!)
-        }
-    }
+    //MARK: - UI Makers
     
     private func generateAreaPath(points points: [CGPoint], shouldClosePath:Bool = true) -> UIBezierPath {
         let progressline = UIBezierPath()
@@ -339,7 +348,7 @@ class LineAndBarGraphView: UIView {
         let maxElem = data.maxElement()
         let maxDelta = maxElem! - minElem!
         let stepHeight = totalHeight / (maxDelta)
-        let segmentWidth = totalWidth / Double(data.count)
+        let segmentWidth = useScrolling ? sizeOfSegmentWhenScroll : totalWidth / Double(data.count)
         var points = [CGPoint]()
         //        self.halfPoints = [CGPoint]()
         let firstPoint = CGPoint(x: 0, y: (maxElem! - data[0] - 0.3) * stepHeight )
