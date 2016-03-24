@@ -65,13 +65,13 @@ class LineAndBarGraphView: UIView {
     private var bottomGraphFakeBarsViews = [UIView]()
 
     private var hasLoadedOnce = false
-    
-    
+
     //MARK: - Overrides
     override init(frame: CGRect) {
         super.init(frame: frame)
        
         self.scrollView = UIScrollView(frame: self.bounds)
+        scrollView.showsHorizontalScrollIndicator = false
         self.addSubview(scrollView)
         scrollView.scrollEnabled = useScrolling
         scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("didTap:")))
@@ -129,6 +129,9 @@ class LineAndBarGraphView: UIView {
     }
     
     //MARK: - API
+    func scrollToLast(){
+        self.scrollView.setContentOffset(CGPoint(x: self.totalWidthOfData-10, y: 0), animated: false)
+    }
     
     func loadGraphFromPoints() {
         if (!self.validateGraphData()){
@@ -144,7 +147,7 @@ class LineAndBarGraphView: UIView {
         self.hasLoadedOnce = true
         
         self.scrollView.contentSize = CGSize(width: self.totalWidthOfData, height: Double(self.bounds.height))
-
+        
         if (self.shouldAnimateEnterance){
             let maskLayer = CAGradientLayer()
             maskLayer.anchorPoint = CGPointZero
