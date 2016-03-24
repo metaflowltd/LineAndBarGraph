@@ -32,6 +32,10 @@ class LineAndBarGraphView: UIView {
     var barViewSelectedFont = UIFont.boldSystemFontOfSize(13)
     var barViewUnselectedFont = UIFont.systemFontOfSize(13)
     
+    var valueLabelFont = UIFont.systemFontOfSize(44)
+    var valueMantissaFont = UIFont.systemFontOfSize(12)
+    var valueUnitsFont = UIFont.systemFontOfSize(12)
+    
     private var totalWidthOfData:Double{
         return Double(self.barGraphData.count) * sizeOfSegmentWhenScroll
     }
@@ -84,7 +88,8 @@ class LineAndBarGraphView: UIView {
 
         let lineGraphValueLabelHeight = 57.0
         let lineGraphValueLabelY = (Double(frame.height) / 2) - (lineGraphValueLabelHeight / 2)
-        self.lineGraphValueLabel = LineGraphValueLabel(frame: CGRect(x: 8, y: lineGraphValueLabelY, width: 96, height: 57), textColor: self.lineColor)
+        
+        self.lineGraphValueLabel = LineGraphValueLabel(frame: CGRect(x: 8, y: lineGraphValueLabelY, width: 96, height: 57), textColor: self.lineColor, valueFont: self.valueLabelFont, mantissaFont: self.valueMantissaFont, unitsFont: self.valueUnitsFont)
         self.addSubview(self.lineGraphValueLabel)
         
     }

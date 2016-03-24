@@ -23,21 +23,21 @@ class LineGraphValueLabel: UIView {
         self.valueUnitsLabel.text = unitText
     }
     
-    init(frame: CGRect, textColor:UIColor) {
+    init(frame: CGRect, textColor:UIColor, valueFont:UIFont, mantissaFont:UIFont, unitsFont:UIFont ) {
         super.init(frame: frame)
         
         self.valueLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 74, height: 57))
         self.addSubview(self.valueLabel)
-        self.valueLabel.font = UIFont.systemFontOfSize(44)
+        self.valueLabel.font = valueFont
         self.valueLabel.textAlignment = .Right
         
         self.valueMantissaLabel = UILabel(frame: CGRect(x: 78, y: 8, width: 11, height: 15))
         self.addSubview(self.valueMantissaLabel)
-        self.valueMantissaLabel.font = UIFont.systemFontOfSize(12)
+        self.valueMantissaLabel.font = mantissaFont
         
         self.valueUnitsLabel = UILabel(frame: CGRect(x: 78, y: 24, width: 17, height: 15))
         self.addSubview(self.valueUnitsLabel)
-        self.valueUnitsLabel.font = UIFont.systemFontOfSize(12)
+        self.valueUnitsLabel.font = unitsFont
         self.setUnitText("KG")
         
         self.valueLabel.textColor = textColor
