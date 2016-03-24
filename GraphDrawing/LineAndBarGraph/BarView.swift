@@ -57,7 +57,7 @@ class BarView: UIView {
         
         self.backgroundColor = UIColor(white: 1, alpha: 0.9)
         
-        self.xValueLabel = UILabel(frame: CGRect(x: 0, y: self.bounds.height - 30, width: self.bounds.width, height: 24))
+        self.xValueLabel = UILabel(frame: CGRect(x: 0, y: self.bounds.height - 33, width: self.bounds.width, height: 30))
         self.xValueLabel.numberOfLines = 2
         self.xValueLabel.font = self.unselectedFont
         self.xValueLabel.textAlignment = .Center

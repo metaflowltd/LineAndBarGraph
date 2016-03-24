@@ -10,9 +10,18 @@ import UIKit
 
 class LineGraphValueLabel: UIView {
 
+    var textColor:UIColor = UIColor.blueColor(){
+        didSet{
+            self.valueLabel.textColor = textColor
+            self.valueMantissaLabel.textColor = textColor
+            self.valueUnitsLabel.textColor = textColor
+        }
+    }
+    
     private var valueLabel: UILabel!
     private var valueMantissaLabel: UILabel!
     private var valueUnitsLabel: UILabel!
+    
     
     func setCurrentDisplayingValue(value:Double){
         self.valueLabel.text = "\(Int(value))"
@@ -39,10 +48,8 @@ class LineGraphValueLabel: UIView {
         self.addSubview(self.valueUnitsLabel)
         self.valueUnitsLabel.font = unitsFont
         self.setUnitText("KG")
+        self.textColor = textColor
         
-        self.valueLabel.textColor = textColor
-        self.valueMantissaLabel.textColor = textColor
-        self.valueUnitsLabel.textColor = textColor
     }
 
     required init?(coder aDecoder: NSCoder) {

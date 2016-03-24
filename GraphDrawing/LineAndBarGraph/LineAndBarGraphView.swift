@@ -18,6 +18,7 @@ class LineAndBarGraphView: UIView {
     var lineColor = UIColor(red: 88.0/255.0, green: 75.0/255.0, blue: 120.0/255.0, alpha: 1)
     
     var selectedIndexBgColor = UIColor(white: 1, alpha: 0.3)
+    var lineGraphSelectedPointBgColor = UIColor.grayColor()
     
     var shouldAnimateEnterance = true
     
@@ -28,9 +29,13 @@ class LineAndBarGraphView: UIView {
     var useScrolling = true
     var sizeOfSegmentWhenScroll = 54.0
     
-    
-    var barViewSelectedFont = UIFont.boldSystemFontOfSize(13)
-    var barViewUnselectedFont = UIFont.systemFontOfSize(13)
+    var lineGraphValueLabelColor = UIColor.blueColor(){
+        didSet{
+            self.lineGraphValueLabel.textColor = lineGraphValueLabelColor
+        }
+    }
+    var barViewSelectedFont = UIFont.boldSystemFontOfSize(12)
+    var barViewUnselectedFont = UIFont.systemFontOfSize(12)
     
     var valueLabelFont = UIFont.systemFontOfSize(44)
     var valueMantissaFont = UIFont.systemFontOfSize(12)
@@ -89,7 +94,7 @@ class LineAndBarGraphView: UIView {
         let lineGraphValueLabelHeight = 57.0
         let lineGraphValueLabelY = (Double(frame.height) / 2) - (lineGraphValueLabelHeight / 2)
         
-        self.lineGraphValueLabel = LineGraphValueLabel(frame: CGRect(x: 8, y: lineGraphValueLabelY, width: 96, height: 57), textColor: self.lineColor, valueFont: self.valueLabelFont, mantissaFont: self.valueMantissaFont, unitsFont: self.valueUnitsFont)
+        self.lineGraphValueLabel = LineGraphValueLabel(frame: CGRect(x: 8, y: lineGraphValueLabelY, width: 96, height: 57), textColor: self.lineGraphValueLabelColor, valueFont: self.valueLabelFont, mantissaFont: self.valueMantissaFont, unitsFont: self.valueUnitsFont)
         self.addSubview(self.lineGraphValueLabel)
         
     }
@@ -126,6 +131,10 @@ class LineAndBarGraphView: UIView {
     //MARK: - API
     
     func loadGraphFromPoints() {
+        if (!self.validateGraphData()){
+            return
+        }
+
         self.drawTopGraph()
         
         self.drawBottomBarGraph()
@@ -211,6 +220,24 @@ class LineAndBarGraphView: UIView {
         }
     }
 
+    //MARK:- Private
+    func validateGraphData() -> Bool{
+        if (self.lineGraphData.count == 0 ||
+            self.barGraphData.count == 0 ||
+            self.dateArray.count == 0){
+            
+            return false
+        }
+        if (self.lineGraphData.count != self.barGraphData.count){
+            return false
+        }
+        if (self.lineGraphData.count != self.dateArray.count){
+            return false
+        }
+        return true
+        
+    }
+
     
     private func cleanGraph(){
         for b in self.barViews{
@@ -288,7 +315,6 @@ class LineAndBarGraphView: UIView {
     
     private func drawBottomBarGraph(){
         
-        
         let totalWidth = Double(self.barGraphView.bounds.size.width)
         let totalHeight = Double(self.barGraphView.bounds.size.height)
         
@@ -297,9 +323,9 @@ class LineAndBarGraphView: UIView {
         for (var i = 0; i < self.barGraphData.count; i++){
             let val = barGraphData[i]
             let x = Double(i) * segmentWidth
-            let heightOfBar = totalHeight * Double(val) / 100.0
-            let y = totalHeight - heightOfBar
-            let bar = BarView(frame: CGRect(x: x, y: y, width: segmentWidth, height: heightOfBar))
+            let heightOfBar = totalHeight * Double(val) * 0.9 / 100.0
+            let y = totalHeight - heightOfBar - 30
+            let bar = BarView(frame: CGRect(x: x, y: y, width: segmentWidth, height: heightOfBar + 30))
             bar.selectedFont = self.barViewSelectedFont
             bar.unselectedFont = self.barViewUnselectedFont
             bar.setUnSelected()
@@ -344,6 +370,7 @@ class LineAndBarGraphView: UIView {
             let p = points[i]
             let p1 = self.lineGraphWrapperView.convertPoint(p, fromView: self.lineGraphView)
             let pView = LinePointView(frame: CGRect(x: 0, y: 0, width: 6, height: 6))
+            pView.selectedBGColor = lineGraphSelectedPointBgColor
             pView.center = p1
             pView.setUnSelected()
             self.pointViews.append(pView)
