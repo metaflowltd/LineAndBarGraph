@@ -34,17 +34,20 @@ class BarView: UIView {
     var xValueLabel: UILabel!
     var topBorder: UIView!
 
+    var selectedFont = UIFont.boldSystemFontOfSize(13)
+    var unselectedFont = UIFont.systemFontOfSize(13)
     
     func setSelected(){
-        self.valueLabel.font = UIFont.boldSystemFontOfSize(13)
-        self.xValueLabel.font = UIFont.boldSystemFontOfSize(13)
+        self.valueLabel.font = self.selectedFont
+        self.xValueLabel.font = self.selectedFont
         self.valueLabel.textColor = UIColor.blackColor()
         self.xValueLabel.textColor = UIColor.blackColor()
     }
     
     func setUnSelected(){
-        self.valueLabel.font = UIFont.systemFontOfSize(13)
-        self.xValueLabel.font = UIFont.systemFontOfSize(13)
+        self.valueLabel.font = self.unselectedFont
+        self.xValueLabel.font = self.unselectedFont
+        
         self.valueLabel.textColor = UIColor.grayColor()
         self.xValueLabel.textColor = UIColor.grayColor()
     }
@@ -54,11 +57,14 @@ class BarView: UIView {
         
         self.backgroundColor = UIColor(white: 1, alpha: 0.9)
         
-        self.xValueLabel = UILabel(frame: CGRect(x: 0, y: self.bounds.height - 18, width: self.bounds.width, height: 14))
+        self.xValueLabel = UILabel(frame: CGRect(x: 0, y: self.bounds.height - 30, width: self.bounds.width, height: 24))
+        self.xValueLabel.numberOfLines = 2
+        self.xValueLabel.font = self.unselectedFont
         self.xValueLabel.textAlignment = .Center
         self.addSubview(self.xValueLabel)
         
         self.valueLabel = UILabel(frame: CGRect(x: 0, y: 4, width: self.bounds.width, height:  14))
+        self.valueLabel.font = self.unselectedFont
         valueLabel.textAlignment = .Center
         self.addSubview(self.valueLabel)
         

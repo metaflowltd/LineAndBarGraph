@@ -28,6 +28,10 @@ class LineAndBarGraphView: UIView {
     var useScrolling = true
     var sizeOfSegmentWhenScroll = 54.0
     
+    
+    var barViewSelectedFont = UIFont.boldSystemFontOfSize(13)
+    var barViewUnselectedFont = UIFont.systemFontOfSize(13)
+    
     private var totalWidthOfData:Double{
         return Double(self.barGraphData.count) * sizeOfSegmentWhenScroll
     }
@@ -291,6 +295,8 @@ class LineAndBarGraphView: UIView {
             let heightOfBar = totalHeight * Double(val) / 100.0
             let y = totalHeight - heightOfBar
             let bar = BarView(frame: CGRect(x: x, y: y, width: segmentWidth, height: heightOfBar))
+            bar.selectedFont = self.barViewSelectedFont
+            bar.unselectedFont = self.barViewUnselectedFont
             bar.setUnSelected()
             bar.setXValue("\(self.dateArray[i])")
             bar.setYValue("\(val)%")
