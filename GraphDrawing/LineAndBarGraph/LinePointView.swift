@@ -10,6 +10,9 @@ import UIKit
 
 class LinePointView: UIView {
 
+    
+    var selectedBGColor = UIColor(white: 0.3, alpha: 0.5)
+
     var selectedBG:UIView?
     
     override init(frame: CGRect) {
@@ -26,12 +29,17 @@ class LinePointView: UIView {
         self.selectedBG = UIView()
         self.selectedBG!.frame = CGRectInset(self.bounds, -9, -9)
         self.selectedBG!.layer.cornerRadius = self.selectedBG!.frame.width / 2
-        self.selectedBG?.backgroundColor = UIColor(white: 0.3, alpha: 0.5)
+        self.selectedBG?.backgroundColor = self.selectedBGColor
         self.addSubview(self.selectedBG!)
 
         self.layer.masksToBounds = false
         self.clipsToBounds = false
 
+        let inner = LinePointView(frame: self.bounds);
+        inner.setUnSelected()
+        inner.center = CGPoint(x: self.selectedBG!.bounds.width / 2, y: self.selectedBG!.bounds.height / 2)
+        
+        self.selectedBG?.addSubview(inner)
     }
     
     
