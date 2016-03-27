@@ -18,6 +18,7 @@ class LineGraphValueLabel: UIView {
         }
     }
     
+    
     private var valueLabel: UILabel!
     private var valueMantissaLabel: UILabel!
     private var valueUnitsLabel: UILabel!
@@ -44,7 +45,7 @@ class LineGraphValueLabel: UIView {
         self.addSubview(self.valueMantissaLabel)
         self.valueMantissaLabel.font = mantissaFont
         
-        self.valueUnitsLabel = UILabel(frame: CGRect(x: 78, y: 24, width: 17, height: 15))
+        self.valueUnitsLabel = UILabel(frame: CGRect(x: 78, y: 24, width: 37, height: 15))
         self.addSubview(self.valueUnitsLabel)
         self.valueUnitsLabel.font = unitsFont
         self.setUnitText("KG")

@@ -41,6 +41,13 @@ class LineAndBarGraphView: UIView {
     var valueMantissaFont = UIFont.systemFontOfSize(12)
     var valueUnitsFont = UIFont.systemFontOfSize(12)
     
+    var lineGraphUnitText:String = "KG"{
+        didSet{
+            self.lineGraphValueLabel.setUnitText(lineGraphUnitText)
+        }
+    }
+    
+    
     private var totalWidthOfData:Double{
         return Double(self.barGraphData.count) * sizeOfSegmentWhenScroll
     }
