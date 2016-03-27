@@ -387,7 +387,10 @@ class LineAndBarGraphView: UIView {
         
         let minElem = data.minElement()
         let maxElem = data.maxElement()
-        let maxDelta = maxElem! - minElem!
+        var maxDelta = maxElem! - minElem!
+        if (maxDelta == 0 ){
+            maxDelta = 1
+        }
         let stepHeight = totalHeight / (maxDelta)
         let segmentWidth = useScrolling ? sizeOfSegmentWhenScroll : totalWidth / Double(data.count)
         var points = [CGPoint]()
