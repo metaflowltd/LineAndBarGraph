@@ -238,6 +238,11 @@ class LineAndBarGraphView: UIView {
             
             return false
         }
+        for d in self.lineGraphData {
+            if (d.isNaN){
+                return false
+            }
+        }
         if (self.lineGraphData.count != self.barGraphData.count){
             return false
         }
@@ -356,7 +361,16 @@ class LineAndBarGraphView: UIView {
     //MARK: - UI Makers
     
     private func generateAreaPath(points points: [CGPoint], shouldClosePath:Bool = true) -> UIBezierPath {
+        
         let progressline = UIBezierPath()
+        
+        for i in 1..<points.count {
+            let p = points[i]
+            if (p.x.isNaN || p.y.isNaN){
+                return progressline
+            }
+        }
+        
         progressline.lineWidth = 1.0
         progressline.lineCapStyle = .Round
         progressline.lineJoinStyle = .Round
@@ -378,6 +392,11 @@ class LineAndBarGraphView: UIView {
     func drawPointsOnGraph(points:[CGPoint]){
         for (var i = 0; i < points.count; i++) {
             let p = points[i]
+            
+            if (p.x.isNaN || p.y.isNaN){
+                return
+            }
+            
             let p1 = self.lineGraphWrapperView.convertPoint(p, fromView: self.lineGraphView)
             let pView = LinePointView(frame: CGRect(x: 0, y: 0, width: 6, height: 6))
             pView.selectedBGColor = lineGraphSelectedPointBgColor
